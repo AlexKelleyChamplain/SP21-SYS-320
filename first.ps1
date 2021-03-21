@@ -1,16 +1,16 @@
-# storyline: Send an email
-# variable can have an undersore or any alphanumeric value.
+# story line: review the security event log
+# Directory to save files:
+$myDir = "C:\Users\Silent_Desktop\Documents\Sys 320\"
 
-#body of the email
-$msg = "Hello there."
+#list all the avalible windows event logs
+Get-EventLog -list 
 
-write-host -BackgroundColor Red -ForegroundColor white $msg
+# Create a promp to allow user to select the log to view
+$readLog = Read-host -Prompt "please select a log to review from the list above"
 
-#Email from address
-$email "alex.kelley@mymail.champlain.edu"
+# Create a prompt to allow user to select what to search
+$toSearch = Read-host -Prompt "please enter in your keyword or phrase to search "
 
-#to address
-$toEmail "deployer@csi-web"
-
-# sending the email
-Send-MailMessage -From $email -To $toEmail -Subject "A Greeting" -Body $msg -SmtpServer 192.168
+# Print the results for the log
+Get-EventLog -Logname $readLog -Newest 40 | where {$_.Message -ilike "*$toSearch*" } | export-csv -NoTypeInformation `
+-Path "$myDir\securityLogs.csv"
